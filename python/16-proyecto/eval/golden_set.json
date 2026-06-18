@@ -1,0 +1,237 @@
+[
+  {
+    "id": "div_zero_001",
+    "descripcion": "Division por cero sin manejo",
+    "codigo": "def calcular_promedio(numeros):\n    return sum(numeros) / len(numeros)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "bug",
+        "patron": "ZeroDivisionError|lista vacía|empty list|len.*0"
+      }
+    ]
+  },
+  {
+    "id": "sql_injection_001",
+    "descripcion": "SQL injection via concatenación de strings",
+    "codigo": "def buscar_usuario(db, nombre):\n    query = \"SELECT * FROM usuarios WHERE nombre = '\" + nombre + \"'\"\n    return db.execute(query)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "seguridad",
+        "patron": "SQL injection|inyección SQL|parametrized|parameterized|placeholder"
+      }
+    ]
+  },
+  {
+    "id": "none_deref_001",
+    "descripcion": "Desreferencia de None sin verificación",
+    "codigo": "def procesar(datos):\n    return datos.strip().upper()",
+    "hallazgos_esperados": [
+      {
+        "severidad": "high",
+        "tipo": "bug",
+        "patron": "None|NoneType|null check|verificar"
+      }
+    ]
+  },
+  {
+    "id": "hardcoded_secret_001",
+    "descripcion": "Credencial hardcodeada en código",
+    "codigo": "API_KEY = \"sk-prod-abc123xyz\"\n\ndef llamar_api(datos):\n    return requests.post(URL, headers={\"Authorization\": API_KEY}, json=datos)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "seguridad",
+        "patron": "hardcoded|variable de entorno|environment variable|secret|credential"
+      }
+    ]
+  },
+  {
+    "id": "n_plus_one_001",
+    "descripcion": "N+1 queries en bucle",
+    "codigo": "def listar_pedidos_con_usuario(db, pedidos):\n    resultado = []\n    for pedido in pedidos:\n        usuario = db.execute(\"SELECT * FROM usuarios WHERE id = ?\", pedido.usuario_id).fetchone()\n        resultado.append({**pedido, \"usuario\": usuario})\n    return resultado",
+    "hallazgos_esperados": [
+      {
+        "severidad": "high",
+        "tipo": "rendimiento",
+        "patron": "N\\+1|query.*bucle|loop.*query|JOIN|batch"
+      }
+    ]
+  },
+  {
+    "id": "bare_except_001",
+    "descripcion": "except desnudo sin manejo de excepción",
+    "codigo": "def leer_config(ruta):\n    try:\n        return json.load(open(ruta))\n    except:\n        return {}",
+    "hallazgos_esperados": [
+      {
+        "severidad": "medium",
+        "tipo": "estilo",
+        "patron": "bare except|excepción específica|specific exception|silencia|swallows"
+      }
+    ]
+  },
+  {
+    "id": "mutable_default_001",
+    "descripcion": "Argumento mutable como default",
+    "codigo": "def agregar_item(item, lista=[]):\n    lista.append(item)\n    return lista",
+    "hallazgos_esperados": [
+      {
+        "severidad": "high",
+        "tipo": "bug",
+        "patron": "mutable default|default mutable|None.*lista|compartido"
+      }
+    ]
+  },
+  {
+    "id": "path_traversal_001",
+    "descripcion": "Path traversal en lectura de archivos",
+    "codigo": "def leer_archivo(nombre):\n    ruta = f\"/uploads/{nombre}\"\n    return open(ruta).read()",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "seguridad",
+        "patron": "path traversal|\\.\\.|realpath|basename|sanitiz"
+      }
+    ]
+  },
+  {
+    "id": "resource_leak_001",
+    "descripcion": "Recurso no cerrado (file handle leak)",
+    "codigo": "def contar_lineas(ruta):\n    f = open(ruta)\n    lineas = f.readlines()\n    return len(lineas)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "medium",
+        "tipo": "bug",
+        "patron": "context manager|with.*open|close|leak|cerrar"
+      }
+    ]
+  },
+  {
+    "id": "race_condition_001",
+    "descripcion": "Race condition en check-then-act",
+    "codigo": "def crear_si_no_existe(ruta, contenido):\n    if not os.path.exists(ruta):\n        with open(ruta, 'w') as f:\n            f.write(contenido)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "medium",
+        "tipo": "bug",
+        "patron": "race condition|TOCTOU|atomic|exclusive|'x'.*mode"
+      }
+    ]
+  },
+  {
+    "id": "codigo_limpio_001",
+    "descripcion": "Código correcto y limpio (sin hallazgos críticos)",
+    "codigo": "def calcular_promedio(numeros: list[float]) -> float | None:\n    if not numeros:\n        return None\n    return sum(numeros) / len(numeros)",
+    "hallazgos_esperados": [],
+    "no_debe_tener_criticos": true
+  },
+  {
+    "id": "infinite_recursion_001",
+    "descripcion": "Recursión sin caso base",
+    "codigo": "def factorial(n):\n    return n * factorial(n - 1)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "bug",
+        "patron": "caso base|base case|recursión infinita|infinite recursion|RecursionError"
+      }
+    ]
+  },
+  {
+    "id": "type_confusion_001",
+    "descripcion": "Mezcla de tipos sin conversión explícita",
+    "codigo": "def sumar_valores(a, b):\n    return a + b  # puede ser suma numérica o concatenación de strings",
+    "hallazgos_esperados": [
+      {
+        "severidad": "low",
+        "tipo": "estilo",
+        "patron": "type hint|anotación de tipo|type annotation|ambig"
+      }
+    ]
+  },
+  {
+    "id": "global_state_001",
+    "descripcion": "Uso de estado global mutable",
+    "codigo": "contador = 0\n\ndef incrementar():\n    global contador\n    contador += 1\n    return contador",
+    "hallazgos_esperados": [
+      {
+        "severidad": "medium",
+        "tipo": "estilo",
+        "patron": "global|estado compartido|shared state|thread|concurrencia"
+      }
+    ]
+  },
+  {
+    "id": "regex_redos_001",
+    "descripcion": "Regex vulnerable a ReDoS",
+    "codigo": "import re\n\ndef validar_email(email):\n    patron = re.compile(r'^(a+)+$')\n    return bool(patron.match(email))",
+    "hallazgos_esperados": [
+      {
+        "severidad": "high",
+        "tipo": "seguridad",
+        "patron": "ReDoS|backtracking|catastrophic|regex denial"
+      }
+    ]
+  },
+  {
+    "id": "eval_injection_001",
+    "descripcion": "Uso de eval con input del usuario",
+    "codigo": "def calcular(expresion: str):\n    return eval(expresion)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "seguridad",
+        "patron": "eval.*peligroso|dangerous eval|arbitrary code|código arbitrario|ast.literal_eval"
+      }
+    ]
+  },
+  {
+    "id": "no_timeout_001",
+    "descripcion": "Petición HTTP sin timeout",
+    "codigo": "import requests\n\ndef obtener_datos(url):\n    respuesta = requests.get(url)\n    return respuesta.json()",
+    "hallazgos_esperados": [
+      {
+        "severidad": "medium",
+        "tipo": "rendimiento",
+        "patron": "timeout|tiempo de espera|hang|bloquea"
+      }
+    ]
+  },
+  {
+    "id": "pickle_deserialization_001",
+    "descripcion": "Deserialización insegura con pickle",
+    "codigo": "import pickle\n\ndef cargar_modelo(datos_binarios):\n    return pickle.loads(datos_binarios)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "seguridad",
+        "patron": "pickle.*inseguro|unsafe pickle|arbitrary code|código arbitrario|confiable|trusted"
+      }
+    ]
+  },
+  {
+    "id": "logging_passwords_001",
+    "descripcion": "Contraseña loggeada en texto plano",
+    "codigo": "import logging\n\ndef autenticar(usuario, password):\n    logging.info(f\"Autenticando usuario={usuario} password={password}\")\n    return verificar_credenciales(usuario, password)",
+    "hallazgos_esperados": [
+      {
+        "severidad": "critical",
+        "tipo": "seguridad",
+        "patron": "contraseña|password.*log|log.*password|sensitive|datos sensibles|redact"
+      }
+    ]
+  },
+  {
+    "id": "dead_code_001",
+    "descripcion": "Código muerto (unreachable)",
+    "codigo": "def procesar(valor):\n    if valor > 0:\n        return valor * 2\n    else:\n        return -valor\n    return 0  # nunca se ejecuta",
+    "hallazgos_esperados": [
+      {
+        "severidad": "low",
+        "tipo": "estilo",
+        "patron": "dead code|código muerto|unreachable|inalcanzable|nunca se ejecuta"
+      }
+    ]
+  }
+]
